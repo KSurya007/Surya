@@ -60,4 +60,17 @@ public class TaskServiceImple implements TaskService {
 		return modelMapper.map(task, TaskDto.class);
 	}
 
+	@Override
+	public void deleteTask(long userid, long taskid) {
+		Users users = userRepository.findById(userid)
+				.orElseThrow(() -> new UserNotFound(String.format("user Id %d is not found", userid)));
+		Task task = taskRepository.findById(taskid)
+				.orElseThrow(() -> new TaskNotFound(String.format("task id %d id not found", taskid)));
+		if (users.getId() != task.getUsers().getId()) {
+			throw new APIException(String.format("task id %d not belongs to User id %d", taskid, userid));
+
+		}
+		taskRepository.deleteById(taskid); // delete the task
+	}
+
 }

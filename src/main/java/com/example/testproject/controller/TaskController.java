@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,5 +40,12 @@ public class TaskController {
 		return new ResponseEntity<>(taskService.getTask(userid, taskid), HttpStatus.OK);
 	}
 	// delete individual task
+	@DeleteMapping("{userid}/tasks/{taskid}")
+	public ResponseEntity<String> deleteTask(@PathVariable(name = "userid") long userid,
+			@PathVariable(name = "taskid") long taskid) {
+		taskService.deleteTask(userid, taskid);
+
+		return new ResponseEntity<>("User deleted Scuccessfully", HttpStatus.OK);
+	}
 }
 
