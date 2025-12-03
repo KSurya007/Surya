@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.testproject.payload.JwtAuthResponse;
 import com.example.testproject.payload.LoginDto;
 import com.example.testproject.payload.UserDto;
+import com.example.testproject.security.JwtTokenProvider;
 import com.example.testproject.service.UserService;
 
 @RestController
@@ -20,6 +22,8 @@ import com.example.testproject.service.UserService;
 public class AuthController {
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private JwtTokenProvider jwtTokenProvider;
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
@@ -29,10 +33,11 @@ public class AuthController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<String> loginUser(@RequestBody LoginDto loginDto) {
+	public ResponseEntity<JwtAuthResponse> loginUser(@RequestBody LoginDto loginDto) {
 		Authentication authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
-		return new ResponseEntity<>("User logined succussfully", HttpStatus.OK);
+		String token = jwtTokenProvider.generateToken(authentication);
+		return ResponseEntity.ok(new JwtAuthResponse(token));
 	}
 
 }
