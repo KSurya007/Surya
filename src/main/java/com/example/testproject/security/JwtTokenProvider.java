@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import com.example.testproject.exception.APIException;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -41,6 +43,16 @@ public class JwtTokenProvider {
 		Claims claims = Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(token).getBody();
 
 		return claims.getSubject();
+	}
+
+	public boolean validateToken(String token) {
+		try {
+			Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(token);
+			return true;
+
+		} catch (Exception e) {
+			throw new APIException("Token is not valid: " + e.getMessage());
+		}
 	}
 
 }
